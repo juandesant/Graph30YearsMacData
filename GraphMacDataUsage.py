@@ -61,7 +61,11 @@ def model_name(model_id):
 years = list(range(1984,2014+1))
 # Get the machines launched each year, using dictionary comprehension
 machines_per_year = {
-    year: [(x['id'], model_name(x['id'])) for x in [x for x in machines if x['year'] == str(year)]]
+    year: [
+            ( machine['id'], model_name(machine['id']) )
+            for machine in machines
+            if machine['year'] == str(year)
+    ]
     for year in years
 }
 
