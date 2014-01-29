@@ -1,5 +1,6 @@
 # Get the data from Apple's website
 import requests
+from functools import reduce
 first_mac_json_url = "http://www.apple.com/30-years/api/mac/data/first-mac.json"
 machine_json_url = "http://www.apple.com/v/30-years/a/scripts/datavis/machinelist.json"
 machine_use_json_url = "http://www.apple.com/30-years/api/mac/data/use.json"
@@ -50,23 +51,17 @@ from sets import Set
 categories = list(
     reduce(
         lambda x,y: x.union(y), # assumes x and y are of class Set
-        map(
-            lambda x: Set(x['categories'].keys()), # Set of individual categories
-            usage
-        ) # list of categories for each model
+        [Set(list(x['categories'].keys())) for x in usage] # list of categories for each model
     ) # union set of categories
 ) # list
 
 def model_name(model_id):
     return filter(lambda x: x['id'] == model_id, machines)[0]['name']
 
-years = range(1984,2014+1)
+years = list(range(1984,2014+1))
 # Get the machines launched each year, using dictionary comprehension
 machines_per_year = {
-    year: map(
-            lambda x: (x['id'], model_name(x['id'])),
-            filter(lambda x: x['year'] == str(year), machines)
-    )
+    year: [(x['id'], model_name(x['id'])) for x in [x for x in machines if x['year'] == str(year)]]
     for year in years
 }
 
